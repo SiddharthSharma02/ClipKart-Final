@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipKart - YouTube Shorts Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+    <meta name="description" content="ClipKart - Convert YouTube videos to professional short-form vertical videos with captions">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Clip<span>Kart</span></h1>
+                <p>Transform any YouTube video into a professional vertical short with Google AI-powered scene detection</p>
+            </div>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="username">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Guest User</span>
+                    </div>
+                    <a href="{{ url_for('index') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="video-input">
+                <form id="videoForm">
+                    <div class="input-group">
+                        <input type="text" id="youtubeUrl" placeholder="Paste YouTube video URL here..." required>
+                        <button type="submit" id="submitBtn"><i class="fas fa-magic"></i> Create Short</button>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <div class="settings">
+                            <label for="duration">
+                                <i class="fas fa-clock"></i> Duration (seconds):
+                                <input type="number" id="duration" name="duration" min="10" max="120" value="60">
+                            </label>
+                        </div>
+                        
+                        <div class="settings">
+                            <label for="format">
+                                <i class="fas fa-file-video"></i> Format:
+                                <select id="format" name="format">
+                                    <option value="mp4">MP4</option>
+                                    <option value="mkv">MKV</option>
+                                </select>
+                            </label>
+                        </div>
+                        
+                        <div class="settings">
+                            <label for="captions" class="checkbox-label">
+                                <input type="checkbox" id="captions" name="captions" checked>
+                                <i class="fas fa-closed-captioning"></i> Add captions
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="output-path">
+                        <label for="outputPath">
+                            <i class="fas fa-folder"></i> Output folder:
+                        </label>
+                        <div class="path-input-group">
+                            <input type="text" id="outputPath" name="outputPath" value="output" required>
+                            <button type="button" id="browseBtn" class="browse-btn">Browse</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="status-text" id="statusText">Initializing...</div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-track">
+                        <div class="progress-bar-download" id="downloadProgress"></div>
+                        <div class="progress-bar-process" id="processProgress"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="percentage" id="percentageText">0%</div>
+                    <div class="estimated-time">
+                        <i class="fas fa-clock"></i> 
+                        <span id="estimatedTime">Calculating...</span>
+                    </div>
+                </div>
+                
+                <div id="downloadSection" style="display: none;">
+                    <p>Your video is ready!</p>
+                    <a href="#" id="downloadLink" class="download-btn">
+                        <i class="fas fa-download"></i> Download Short
+                    </a>
+                    <button id="newVideoBtn" class="new-video-btn">
+                        <i class="fas fa-plus"></i> Create Another
+                    </button>
+                </div>
+                
+                <div id="errorSection" style="display: none;">
+                    <p id="errorText" class="error-text">An error occurred.</p>
+                    <button id="retryBtn" class="retry-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+                
+                <div class="file-location" id="fileLocation" style="display: none;">
+                    <strong>File saved at:</strong>
+                    <span class="file-path" id="filePath"></span>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>ClipKart &copy; 2025 | Create vertical short-form videos optimized for TikTok, Instagram Reels & YouTube Shorts</p>
+            <p class="ai-credit">Powered by Google Video Intelligence AI</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

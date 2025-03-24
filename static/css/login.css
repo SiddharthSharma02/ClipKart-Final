@@ -1,0 +1,348 @@
+/* Base styles */
+:root {
+    --primary: #58a4ff;
+    --primary-dark: #4085df;
+    --secondary: #ff5858;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+    --text: #ffffff;
+    --text-secondary: #b8b8b8;
+    --border: #333333;
+    --success: #4cd964;
+    --error: #ff3b30;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Logo Animation */
+.logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.logo-animation {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    perspective: 1000px;
+}
+
+.clip {
+    color: var(--text);
+    animation: fadeInDown 1.5s ease-out forwards, pulse 2s infinite alternate;
+}
+
+.kart {
+    color: var(--primary);
+    animation: fadeInUp 1.5s ease-out forwards, pulse 2s infinite alternate;
+}
+
+.logo-icon {
+    margin-left: 1rem;
+    color: var(--secondary);
+    animation: spin 2s ease-in-out forwards, glow 3s infinite alternate;
+}
+
+.tagline {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeIn 2s ease-out 0.5s forwards;
+}
+
+/* Auth Container */
+.auth-container {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 450px;
+    animation: slideUp 1s ease-out;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    flex: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: var(--text);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary);
+    animation: growWidth 0.3s ease-out;
+}
+
+/* Forms */
+.forms-container {
+    position: relative;
+    min-height: 320px;
+}
+
+.auth-form {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.auth-form.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group label i {
+    margin-right: 0.5rem;
+    color: var(--primary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(88, 164, 255, 0.25);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.remember-me, .terms {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.forgot-password, .terms a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover, .terms a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.auth-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+}
+
+.guest-login {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.guest-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.guest-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    border-color: var(--text-secondary);
+}
+
+.guest-btn i {
+    font-size: 1.1rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes growWidth {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes spin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px rgba(255, 88, 88, 0.5); }
+    to { text-shadow: 0 0 15px rgba(255, 88, 88, 0.8), 0 0 20px rgba(255, 88, 88, 0.5); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .logo-animation {
+        font-size: 2.5rem;
+    }
+    
+    .auth-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-animation {
+        font-size: 2rem;
+    }
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+} 

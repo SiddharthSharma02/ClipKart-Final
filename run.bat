@@ -1,0 +1,3 @@
+@echo off
+echo Starting ClipKart - YouTube Shorts Creator...
+python app.py 

@@ -1,0 +1,679 @@
+:root {
+    --dark-bg: #121212;
+    --dark-surface: #1e1e1e;
+    --dark-surface-hover: #292929;
+    --dark-border: #2c2c2c;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --accent-blue: #2979ff;
+    --accent-blue-dark: #2255cc;
+    --accent-green: #00e676;
+    --accent-green-dark: #00c853;
+    --accent-red: #ff5252;
+    --accent-red-dark: #e53935;
+    --processing-gray: #555555;
+    --shadow-soft: 0 8px 16px rgba(0, 0, 0, 0.2);
+    --shadow-strong: 0 12px 24px rgba(0, 0, 0, 0.3);
+    --transition-normal: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+    animation: fadeInDown 0.8s ease;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    position: relative;
+    padding: 0 15px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo h1:before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    background: var(--accent-blue);
+    border-radius: 8px;
+    transform: rotate(45deg);
+    z-index: -1;
+    filter: blur(2px);
+    animation: pulse 3s infinite alternate;
+}
+
+.logo span {
+    color: var(--accent-blue);
+    position: relative;
+}
+
+.logo span::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent-blue);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s ease;
+}
+
+.logo:hover span::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.logo p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Main content */
+main {
+    flex: 1;
+    animation: fadeIn 1s ease;
+}
+
+.video-input {
+    background-color: var(--dark-surface);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 30px;
+    transition: var(--transition-normal);
+}
+
+.video-input:hover {
+    box-shadow: var(--shadow-strong);
+    transform: translateY(-2px);
+    background-color: var(--dark-surface-hover);
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 16px;
+    background-color: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 8px 0 0 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition-normal);
+}
+
+input[type="text"]:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(41, 121, 255, 0.2);
+}
+
+button {
+    padding: 0 30px;
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--transition-normal);
+}
+
+button:hover {
+    background-color: var(--accent-blue-dark);
+    transform: translateX(2px);
+}
+
+/* Settings group */
+.settings-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.settings {
+    display: flex;
+    align-items: center;
+}
+
+.settings label {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    background-color: var(--dark-bg);
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: var(--transition-normal);
+}
+
+.settings label:hover {
+    color: var(--text-primary);
+    background-color: rgba(41, 121, 255, 0.1);
+}
+
+.settings i {
+    margin-right: 8px;
+    color: var(--accent-blue);
+}
+
+input[type="number"] {
+    width: 60px;
+    margin-left: 10px;
+    padding: 6px;
+    background-color: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    text-align: center;
+    transition: var(--transition-normal);
+}
+
+input[type="number"]:focus {
+    border-color: var(--accent-blue);
+}
+
+select {
+    margin-left: 10px;
+    padding: 6px 10px;
+    background-color: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    transition: var(--transition-normal);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232979ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 30px;
+}
+
+select:focus {
+    border-color: var(--accent-blue);
+    outline: none;
+}
+
+/* Output path */
+.output-path {
+    margin-top: 10px;
+}
+
+.output-path label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.output-path i {
+    margin-right: 8px;
+    color: var(--accent-blue);
+}
+
+.path-input-group {
+    display: flex;
+}
+
+.path-input-group input {
+    flex: 1;
+    border-radius: 8px 0 0 8px;
+}
+
+.browse-btn {
+    border-radius: 0 8px 8px 0;
+    padding: 0 15px;
+    background-color: var(--dark-surface-hover);
+    border: 1px solid var(--dark-border);
+    border-left: none;
+    color: var(--text-secondary);
+    font-weight: normal;
+}
+
+.browse-btn:hover {
+    background-color: var(--dark-border);
+    color: var(--text-primary);
+}
+
+/* Progress container */
+.progress-container {
+    background-color: var(--dark-surface);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.status-text {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.progress-wrapper {
+    position: relative;
+    height: 18px;
+    background: var(--dark-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.progress-track {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.progress-bar-download, .progress-bar-process {
+    position: absolute;
+    height: 100%;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.progress-bar-download {
+    background: linear-gradient(90deg, var(--accent-blue-dark), var(--accent-blue));
+    width: 0;
+    z-index: 2;
+}
+
+.progress-bar-process {
+    background: linear-gradient(90deg, #444, var(--processing-gray));
+    width: 0;
+    z-index: 1;
+}
+
+.percentage {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+/* File location */
+.file-location {
+    background-color: var(--dark-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    text-align: left;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--accent-blue);
+    animation: fadeIn 0.5s ease;
+}
+
+.file-path {
+    display: block;
+    margin-top: 5px;
+    word-break: break-all;
+    font-family: monospace;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+/* Download section */
+#downloadSection {
+    margin-top: 25px;
+    animation: fadeIn 0.5s ease;
+}
+
+.download-btn, .new-video-btn, .retry-btn {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 14px 25px;
+    background-color: var(--accent-blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: var(--transition-normal);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.download-btn {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-green-dark));
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, var(--accent-green-dark), var(--accent-green));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.new-video-btn {
+    margin-left: 15px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+}
+
+.new-video-btn:hover {
+    background: linear-gradient(135deg, var(--accent-blue-dark), var(--accent-blue));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.retry-btn {
+    background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));
+}
+
+.retry-btn:hover {
+    background: linear-gradient(135deg, var(--accent-red-dark), var(--accent-red));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Error section */
+#errorSection {
+    margin-top: 25px;
+    animation: fadeIn 0.5s ease;
+}
+
+.error-text {
+    color: var(--accent-red);
+    margin-bottom: 20px;
+    background-color: rgba(255, 82, 82, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 25px;
+    background-color: var(--dark-surface);
+    color: var(--text-primary);
+    border-radius: 8px;
+    box-shadow: var(--shadow-strong);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    max-width: 400px;
+    font-weight: 500;
+    border-left: 4px solid var(--accent-blue);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.error {
+    border-left-color: var(--accent-red);
+}
+
+.toast.success {
+    border-left-color: var(--accent-green);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px 0 20px;
+    margin-top: 60px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--dark-border);
+}
+
+.ai-credit {
+    margin-top: 10px;
+    color: var(--accent-blue);
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    0% { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: rotate(45deg) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: rotate(45deg) scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .logo h1 {
+        font-size: 2.8rem;
+    }
+    
+    .video-input {
+        padding: 20px;
+    }
+    
+    .settings-group {
+        justify-content: flex-start;
+    }
+    
+    .download-btn, .new-video-btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        text-align: center;
+    }
+    
+    .toast {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        max-width: unset;
+    }
+    
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .user-menu {
+        margin-top: 1rem;
+    }
+}
+
+/* Checkbox styling */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked::before {
+    content: "✓";
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.checkbox-label input[type="checkbox"]:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Progress info section with percentage and estimated time */
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0 0.25rem;
+}
+
+.estimated-time {
+    font-size: 0.9rem;
+    color: #b8b8b8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.estimated-time i {
+    color: #58a4ff;
+}
+
+/* Update percentage styling to work with flex layout */
+.percentage {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Make the progress container appear in the same place as the input form */
+#progressContainer {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 800px;
+    width: 100%;
+}
+
+/* Ensure status text is prominent */
+.status-text {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* User Menu styles */
+.user-menu {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.username i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+} 
