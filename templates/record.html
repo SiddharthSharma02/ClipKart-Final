@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipKart - Screen Recorder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #333333;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --card-background: #121212;
+            --hover-color: #1e1e1e;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            flex: 1;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            margin: 0;
+            color: #fff;
+        }
+        
+        .logo h1 span {
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: var(--hover-color);
+        }
+        
+        .nav-link.active {
+            background: var(--primary-color);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .recording-section {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .screen-container {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            aspect-ratio: 16/9;
+        }
+        
+        #screenView {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #000;
+        }
+        
+        .screen-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-background);
+            color: var(--text-secondary, #999);
+        }
+        
+        .screen-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .facecam-container {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            bottom: 20px;
+            right: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            background-color: #000;
+            z-index: 10;
+        }
+        
+        #facecamView {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .controls-container {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .control-group label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .select-input {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .select-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .facecam-position {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .position-option {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .position-option:hover {
+            background: var(--hover-color);
+        }
+        
+        .position-option.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .camera-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .control-button {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .start-button {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .start-button:hover {
+            background-color: #25a25a;
+        }
+        
+        .stop-button {
+            background-color: var(--error-color);
+            color: white;
+            display: none;
+        }
+        
+        .stop-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .download-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .download-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .delete-button {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .delete-button:hover {
+            background-color: #1a2530;
+        }
+        
+        .recordings-section {
+            padding: 1.5rem;
+            background: var(--card-background);
+            border-radius: 12px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .recordings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .recordings-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .recordings-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .recording-item {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: var(--background-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            aspect-ratio: 16/9;
+        }
+        
+        .recording-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .recording-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .recording-info {
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 0 10px;
+        }
+        
+        .recording-mode {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .recording-item:hover .recording-overlay {
+            opacity: 1;
+        }
+        
+        .recording-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .recording-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .recording-action:hover {
+            transform: scale(1.1);
+        }
+        
+        .recording-action.delete {
+            background: var(--error-color);
+        }
+        
+        .empty-recordings {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Clip<span>Kart</span></h1>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{{ url_for('record') }}" class="nav-link active">
+                    <i class="fas fa-video"></i> Record
+                </a>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="recording-section">
+                <div class="screen-container">
+                    <video id="screenView" autoplay muted></video>
+                    <div id="screenPlaceholder" class="screen-placeholder">
+                        <i class="fas fa-desktop"></i>
+                        <p>Your screen will appear here</p>
+                    </div>
+                    <div class="facecam-container" id="facecamContainer">
+                        <video id="facecamView" autoplay muted></video>
+                    </div>
+                </div>
+                
+                <div class="controls-container">
+                    <h2>Screen & Camera Recording</h2>
+                    
+                    <div class="control-group">
+                        <label for="recordingMode">Recording Mode</label>
+                        <select id="recordingMode" class="select-input">
+                            <option value="both">Screen + Facecam</option>
+                            <option value="screen">Screen Only</option>
+                            <option value="facecam">Facecam Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group" id="screenSourceGroup">
+                        <label for="screenSource">Screen Source</label>
+                        <select id="screenSource" class="select-input">
+                            <option value="screen">Entire Screen</option>
+                            <option value="window">Application Window</option>
+                            <option value="tab">Browser Tab</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group" id="facecamGroup">
+                        <label for="facecamToggle">Facecam</label>
+                        <select id="facecamToggle" class="select-input">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group" id="facecamPositionGroup">
+                        <label>Facecam Position</label>
+                        <div class="facecam-position">
+                            <div class="position-option active" data-position="bottom-right">Bottom Right</div>
+                            <div class="position-option" data-position="bottom-left">Bottom Left</div>
+                            <div class="position-option" data-position="top-right">Top Right</div>
+                            <div class="position-option" data-position="top-left">Top Left</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group" id="facecamSizeGroup">
+                        <label for="facecamSize">Facecam Size</label>
+                        <select id="facecamSize" class="select-input">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    
+                    <div class="camera-buttons">
+                        <button id="startButton" class="control-button start-button">
+                            <i class="fas fa-record-vinyl"></i> Start Recording
+                        </button>
+                        <button id="stopButton" class="control-button stop-button" disabled>
+                            <i class="fas fa-stop"></i> Stop Recording
+                        </button>
+                        <button id="deleteButton" class="control-button delete-button" disabled>
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button id="downloadButton" class="control-button download-button" disabled>
+                            <i class="fas fa-download"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recordings-section">
+                <div class="recordings-header">
+                    <h2 class="recordings-title">Your Recordings</h2>
+                </div>
+                
+                <div id="recordingsList" class="recordings-list">
+                    <div class="empty-recordings">
+                        <i class="fas fa-film" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>Your recordings will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>ClipKart &copy; 2025 | Create vertical short-form videos optimized for TikTok, Instagram Reels & YouTube Shorts</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const screenView = document.getElementById('screenView');
+            const screenPlaceholder = document.getElementById('screenPlaceholder');
+            const facecamView = document.getElementById('facecamView');
+            const facecamContainer = document.getElementById('facecamContainer');
+            const startButton = document.getElementById('startButton');
+            const stopButton = document.getElementById('stopButton');
+            const deleteButton = document.getElementById('deleteButton');
+            const downloadButton = document.getElementById('downloadButton');
+            const recordingsList = document.getElementById('recordingsList');
+            const screenSource = document.getElementById('screenSource');
+            const facecamToggle = document.getElementById('facecamToggle');
+            const facecamSize = document.getElementById('facecamSize');
+            const positionOptions = document.querySelectorAll('.position-option');
+            const recordingMode = document.getElementById('recordingMode');
+            const screenSourceGroup = document.getElementById('screenSourceGroup');
+            const facecamGroup = document.getElementById('facecamGroup');
+            const facecamPositionGroup = document.getElementById('facecamPositionGroup');
+            const facecamSizeGroup = document.getElementById('facecamSizeGroup');
+            
+            // Variables
+            let screenStream = null;
+            let facecamStream = null;
+            let combinedStream = null;
+            let mediaRecorder = null;
+            let recordedChunks = [];
+            let recording = false;
+            let recordings = [];
+            let currentFacecamPosition = 'bottom-right';
+            let currentMode = 'both'; // Default recording mode
+            
+            // Initialize UI based on recording mode
+            updateUIForRecordingMode(currentMode);
+            
+            // Recording mode change handler
+            recordingMode.addEventListener('change', function() {
+                currentMode = this.value;
+                updateUIForRecordingMode(currentMode);
+            });
+            
+            // Update UI elements based on recording mode
+            function updateUIForRecordingMode(mode) {
+                // Reset display
+                screenSourceGroup.style.display = 'flex';
+                facecamGroup.style.display = 'flex';
+                facecamPositionGroup.style.display = 'flex';
+                facecamSizeGroup.style.display = 'flex';
+                facecamContainer.style.display = facecamToggle.value === 'on' ? 'block' : 'none';
+                
+                // Update UI based on mode
+                switch(mode) {
+                    case 'facecam':
+                        // Facecam only mode
+                        screenSourceGroup.style.display = 'none';
+                        facecamContainer.style.width = '100%';
+                        facecamContainer.style.height = '100%';
+                        facecamContainer.style.position = 'relative';
+                        facecamContainer.style.top = '0';
+                        facecamContainer.style.left = '0';
+                        facecamContainer.style.right = '0';
+                        facecamContainer.style.bottom = '0';
+                        facecamContainer.style.zIndex = '0';
+                        screenView.style.display = 'none';
+                        screenPlaceholder.style.display = 'none';
+                        facecamPositionGroup.style.display = 'none';
+                        facecamSizeGroup.style.display = 'none';
+                        facecamToggle.value = 'on';
+                        if (!facecamStream) startFacecam();
+                        break;
+                        
+                    case 'screen':
+                        // Screen only mode
+                        facecamGroup.style.display = 'none';
+                        facecamPositionGroup.style.display = 'none';
+                        facecamSizeGroup.style.display = 'none';
+                        facecamContainer.style.display = 'none';
+                        screenView.style.display = 'block';
+                        break;
+                        
+                    case 'both':
+                    default:
+                        // Both screen and facecam
+                        facecamContainer.style.position = 'absolute';
+                        screenView.style.display = 'block';
+                        updateFacecamPosition();
+                        updateFacecamSize();
+                        break;
+                }
+            }
+            
+            // Set up position options
+            positionOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    positionOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    // Set position
+                    currentFacecamPosition = this.dataset.position;
+                    updateFacecamPosition();
+                });
+            });
+            
+            // Update facecam size
+            facecamSize.addEventListener('change', updateFacecamSize);
+            
+            function updateFacecamSize() {
+                // Only apply size in combined mode
+                if (currentMode === 'both') {
+                    const size = facecamSize.value;
+                    let sizeValue = '25%'; // Default medium
+                    
+                    if (size === 'small') {
+                        sizeValue = '15%';
+                    } else if (size === 'large') {
+                        sizeValue = '35%';
+                    }
+                    
+                    facecamContainer.style.width = sizeValue;
+                    // Maintain 16:9 aspect ratio for facecam
+                    const width = facecamContainer.offsetWidth;
+                    const height = width * (9/16);
+                    facecamContainer.style.height = `${height}px`;
+                }
+            }
+            
+            // Update facecam position
+            function updateFacecamPosition() {
+                // Only apply position in combined mode
+                if (currentMode !== 'both') return;
+                
+                // Reset all positions
+                facecamContainer.style.top = 'auto';
+                facecamContainer.style.right = 'auto';
+                facecamContainer.style.bottom = 'auto';
+                facecamContainer.style.left = 'auto';
+                
+                // Set position based on selection
+                switch (currentFacecamPosition) {
+                    case 'bottom-right':
+                        facecamContainer.style.bottom = '20px';
+                        facecamContainer.style.right = '20px';
+                        break;
+                    case 'bottom-left':
+                        facecamContainer.style.bottom = '20px';
+                        facecamContainer.style.left = '20px';
+                        break;
+                    case 'top-right':
+                        facecamContainer.style.top = '20px';
+                        facecamContainer.style.right = '20px';
+                        break;
+                    case 'top-left':
+                        facecamContainer.style.top = '20px';
+                        facecamContainer.style.left = '20px';
+                        break;
+                }
+            }
+            
+            // Toggle facecam
+            facecamToggle.addEventListener('change', function() {
+                if (this.value === 'on') {
+                    facecamContainer.style.display = 'block';
+                    if (!facecamStream) {
+                        startFacecam();
+                    }
+                } else {
+                    facecamContainer.style.display = 'none';
+                }
+            });
+            
+            // Start facecam
+            async function startFacecam() {
+                try {
+                    // Request 16:9 aspect ratio for webcam
+                    facecamStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: {
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            aspectRatio: { ideal: 16/9 }
+                        }, 
+                        audio: false 
+                    });
+                    
+                    facecamView.srcObject = facecamStream;
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    alert('Unable to access camera. Please check your permissions.');
+                    facecamToggle.value = 'off';
+                    facecamContainer.style.display = 'none';
+                    
+                    // If in facecam-only mode, switch to screen-only mode
+                    if (currentMode === 'facecam') {
+                        recordingMode.value = 'screen';
+                        currentMode = 'screen';
+                        updateUIForRecordingMode(currentMode);
+                    }
+                }
+            }
+            
+            // Start screen capture
+            async function startScreenCapture() {
+                const displayMediaOptions = {
+                    video: {
+                        cursor: "always",
+                        aspectRatio: 16/9
+                    },
+                    audio: true
+                };
+                
+                try {
+                    // Set specific options based on selected source
+                    switch(screenSource.value) {
+                        case 'screen':
+                            displayMediaOptions.video.displaySurface = 'monitor';
+                            break;
+                        case 'window':
+                            displayMediaOptions.video.displaySurface = 'window';
+                            break;
+                        case 'tab':
+                            displayMediaOptions.video.displaySurface = 'browser';
+                            break;
+                    }
+                    
+                    screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                    screenView.srcObject = screenStream;
+                    screenPlaceholder.style.display = 'none';
+                    
+                    // Listen for when user ends screen sharing
+                    screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+                        if (recording) {
+                            stopRecording();
+                        }
+                        screenPlaceholder.style.display = 'flex';
+                        screenView.srcObject = null;
+                    });
+                    
+                    return true;
+                } catch (err) {
+                    console.error('Error capturing screen:', err);
+                    alert('Unable to capture screen. Please check your permissions.');
+                    
+                    // If in screen-only mode, switch to facecam-only mode
+                    if (currentMode === 'screen') {
+                        recordingMode.value = 'facecam';
+                        currentMode = 'facecam';
+                        updateUIForRecordingMode(currentMode);
+                    }
+                    
+                    return false;
+                }
+            }
+            
+            // Start recording
+            async function startRecording() {
+                let audioTracks = [];
+                let videoTracks = [];
+                let shouldContinue = true;
+                
+                // Setup based on recording mode
+                switch(currentMode) {
+                    case 'both':
+                        // Capture both screen and facecam
+                        shouldContinue = await startScreenCapture();
+                        if (!shouldContinue) return;
+                        
+                        // Add screen video track
+                        if (screenStream) {
+                            screenStream.getVideoTracks().forEach(track => videoTracks.push(track));
+                            // Add system audio if available
+                            screenStream.getAudioTracks().forEach(track => audioTracks.push(track));
+                        }
+                        
+                        // Add facecam if enabled
+                        if (facecamToggle.value === 'on' && !facecamStream) {
+                            await startFacecam();
+                        }
+                        break;
+                        
+                    case 'screen':
+                        // Capture screen only
+                        shouldContinue = await startScreenCapture();
+                        if (!shouldContinue) return;
+                        
+                        // Add screen video and audio tracks
+                        if (screenStream) {
+                            screenStream.getVideoTracks().forEach(track => videoTracks.push(track));
+                            // Add system audio if available
+                            screenStream.getAudioTracks().forEach(track => audioTracks.push(track));
+                        }
+                        break;
+                        
+                    case 'facecam':
+                        // Capture facecam only
+                        if (!facecamStream) {
+                            await startFacecam();
+                        }
+                        
+                        if (!facecamStream) {
+                            alert('Unable to start recording without camera access.');
+                            return;
+                        }
+                        
+                        // Add facecam video track
+                        facecamStream.getVideoTracks().forEach(track => videoTracks.push(track));
+                        break;
+                }
+                
+                // Add mic audio for all modes
+                try {
+                    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    micStream.getAudioTracks().forEach(track => audioTracks.push(track));
+                } catch (err) {
+                    console.warn('Microphone not available:', err);
+                }
+                
+                // Create combined stream
+                const tracks = [...videoTracks, ...audioTracks];
+                if (tracks.length === 0) {
+                    alert('No media tracks available for recording. Please check your permissions.');
+                    return;
+                }
+                
+                combinedStream = new MediaStream(tracks);
+                
+                // Set up recording with MP4 container format if available
+                recordedChunks = [];
+                
+                // Try to use H.264 codec for MP4 compatibility
+                let options;
+                try {
+                    options = { mimeType: 'video/webm; codecs=h264' };
+                    mediaRecorder = new MediaRecorder(combinedStream, options);
+                } catch (e) {
+                    console.warn('H.264 codec not supported, trying VP9');
+                    try {
+                        options = { mimeType: 'video/webm; codecs=vp9' };
+                        mediaRecorder = new MediaRecorder(combinedStream, options);
+                    } catch (e) {
+                        console.warn('VP9 codec not supported, using default codec');
+                        mediaRecorder = new MediaRecorder(combinedStream);
+                    }
+                }
+                
+                mediaRecorder.ondataavailable = function(e) {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = function() {
+                    // Create a webm blob initially
+                    const webmBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(webmBlob);
+                    
+                    // Show a message that we're converting to MP4 format for download
+                    console.log('Recording completed. MP4 format will be used for downloads.');
+                    
+                    // Save recording with mode information
+                    recordings.push({
+                        id: Date.now().toString(),
+                        url: url,
+                        blob: webmBlob,
+                        date: new Date().toLocaleString(),
+                        mode: currentMode
+                    });
+                    
+                    // Update UI
+                    updateRecordingsList();
+                    
+                    // Enable buttons
+                    deleteButton.disabled = false;
+                    downloadButton.disabled = false;
+                    startButton.style.display = 'flex';
+                    stopButton.style.display = 'none';
+                    recording = false;
+                    
+                    // Stop streams
+                    if (screenStream) {
+                        screenStream.getTracks().forEach(track => track.stop());
+                        screenStream = null;
+                    }
+                    
+                    // Only reset screen view in screen or both modes
+                    if (currentMode !== 'facecam') {
+                        screenPlaceholder.style.display = 'flex';
+                        screenView.srcObject = null;
+                    }
+                    
+                    // Reset UI for the current mode
+                    updateUIForRecordingMode(currentMode);
+                };
+                
+                // Start recording
+                mediaRecorder.start(1000); // Capture in 1-second chunks
+                recording = true;
+                
+                // Update UI
+                startButton.style.display = 'none';
+                stopButton.style.display = 'flex';
+                stopButton.disabled = false;
+            }
+            
+            // Stop recording
+            function stopRecording() {
+                if (mediaRecorder && recording) {
+                    mediaRecorder.stop();
+                }
+            }
+            
+            // Update recordings list
+            function updateRecordingsList() {
+                // Clear existing content
+                recordingsList.innerHTML = '';
+                
+                if (recordings.length === 0) {
+                    recordingsList.innerHTML = `
+                        <div class="empty-recordings">
+                            <i class="fas fa-film" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>Your recordings will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Add each recording
+                recordings.forEach((recording, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'recording-item';
+                    
+                    const formattedDate = new Date(recording.date).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // Get mode display text
+                    let modeText = 'Screen + Facecam';
+                    if (recording.mode === 'screen') modeText = 'Screen Only';
+                    if (recording.mode === 'facecam') modeText = 'Facecam Only';
+                    
+                    item.innerHTML = `
+                        <video class="recording-video" src="${recording.url}" controls></video>
+                        <div class="recording-overlay">
+                            <div class="recording-info">
+                                Recording ${index + 1} - ${formattedDate}<br>
+                                <span class="recording-mode">${modeText}</span>
+                            </div>
+                            <div class="recording-actions">
+                                <div class="recording-action download" data-index="${index}" title="Download as MP4">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                                <div class="recording-action delete" data-index="${index}" title="Delete recording">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    recordingsList.appendChild(item);
+                });
+                
+                // Add event listeners to recording actions
+                document.querySelectorAll('.recording-action.download').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        downloadRecording(index);
+                    });
+                });
+                
+                document.querySelectorAll('.recording-action.delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        deleteRecording(index);
+                    });
+                });
+            }
+            
+            // Download recording
+            function downloadRecording(index) {
+                if (index < 0 || index >= recordings.length) return;
+                
+                const recording = recordings[index];
+                const a = document.createElement('a');
+                a.href = recording.url;
+                a.download = `clipkart_screen_recording_${new Date().toISOString().replace(/[:.]/g, '-')}.mp4`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            
+            // Delete recording
+            function deleteRecording(index) {
+                if (index < 0 || index >= recordings.length) return;
+                
+                // Revoke URL to free memory
+                URL.revokeObjectURL(recordings[index].url);
+                
+                // Remove recording
+                recordings.splice(index, 1);
+                
+                // Update UI
+                updateRecordingsList();
+                
+                if (recordings.length === 0) {
+                    deleteButton.disabled = true;
+                    downloadButton.disabled = true;
+                }
+            }
+            
+            // Download latest recording
+            function downloadLatestRecording() {
+                if (recordings.length > 0) {
+                    downloadRecording(recordings.length - 1);
+                }
+            }
+            
+            // Delete latest recording
+            function deleteLatestRecording() {
+                if (recordings.length > 0) {
+                    deleteRecording(recordings.length - 1);
+                }
+            }
+            
+            // Event listeners
+            startButton.addEventListener('click', startRecording);
+            stopButton.addEventListener('click', stopRecording);
+            downloadButton.addEventListener('click', downloadLatestRecording);
+            deleteButton.addEventListener('click', deleteLatestRecording);
+            
+            // Initialize facecam position and size
+            updateFacecamPosition();
+            updateFacecamSize();
+            
+            // Start facecam if enabled by default
+            if (facecamToggle.value === 'on') {
+                startFacecam();
+            }
+        });
+    </script>
+</body>
+</html> 

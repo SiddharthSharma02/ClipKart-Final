@@ -1,14 +1,14 @@
 # ClipKart - YouTube Shorts Creator
 
-ClipKart is a Python web application that automatically downloads YouTube videos, identifies the most interesting scenes, and creates vertical short-form videos (1080x1920) with captions. The output videos are optimized for platforms like TikTok, Instagram Reels, or YouTube Shorts and limited to 60 seconds.
+ClipKart is a Python web application that automatically downloads YouTube videos and creates vertical short-form videos (1080x1920) with captions from the first 45 seconds. The output videos are optimized for platforms like TikTok, Instagram Reels, or YouTube Shorts.
 
 ## ✨ Features
 
-- **Smart Scene Detection**: Automatically detects and selects the most engaging segments
+- **Simple Extraction**: Takes the first 45 seconds of any YouTube video
 - **Vertical Format Conversion**: Transforms landscape videos to vertical (9:16 aspect ratio)
 - **Automatic Captions**: Adds captions using speech recognition
 - **User-friendly Interface**: Dark-themed web interface with progress tracking
-- **Customizable Settings**: Control duration, format, and caption options
+- **Customizable Settings**: Control output format and caption options
 - **Local Storage**: Save videos directly to your computer
 
 ## 🚀 Live Demo
@@ -49,23 +49,18 @@ python app.py
 
 1. Log in or continue as a guest
 2. Enter a YouTube URL in the input box
-3. Set the desired duration (up to 60 seconds)
-4. Choose output format (MP4 or MKV)
-5. Enable/disable captions as needed
-6. Click "Create Short" and wait for processing to complete
-7. Download your short video when ready
+3. Choose output format (MP4 or MKV)
+4. Enable/disable captions as needed
+5. Click "Create Short" and wait for processing to complete
+6. Download your short video when ready
 
 ## 🔍 How It Works
 
-1. The script downloads the specified YouTube video
-2. It detects scene changes and analyzes each scene for interest level based on:
-   - Motion analysis
-   - Visual complexity
-   - Face detection
-3. The best scenes are selected to fit within the time limit
-4. Selected scenes are cropped to vertical format
-5. Speech recognition extracts dialogue for captions
-6. The final video is assembled and exported
+1. The application downloads the specified YouTube video
+2. It takes the first 45 seconds of the video
+3. The video is cropped to vertical format (9:16 aspect ratio)
+4. Speech recognition extracts dialogue for captions
+5. The final video is assembled and exported
 
 ## 📂 Project Structure
 
@@ -78,5 +73,4 @@ python app.py
 
 ## ⚠️ Note
 
-This tool is for personal use only. Respect copyright and terms of service for all platforms. 
 This tool is for personal use only. Respect copyright and terms of service for all platforms. 

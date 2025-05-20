@@ -19,42 +19,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Login form submission
     const loginBtn = document.getElementById('login-btn');
     loginBtn.addEventListener('click', function() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        
-        // Basic validation
-        if (!email || !password) {
-            showFormError('login-form', 'Please fill in all fields');
-            return;
-        }
-        
-        // For demo purposes, redirect to home page
-        // In a real app, this would validate credentials with the server
-        redirectToHome();
+        // Here we would normally validate credentials
+        // For this demo, we'll just redirect to the navigation page
+        window.location.href = '/navigation';
     });
     
     // Sign-up form submission
     const signupBtn = document.getElementById('signup-btn');
     signupBtn.addEventListener('click', function() {
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const confirm = document.getElementById('signup-confirm').value;
-        
-        // Basic validation
-        if (!name || !email || !password || !confirm) {
-            showFormError('signup-form', 'Please fill in all fields');
-            return;
-        }
-        
-        if (password !== confirm) {
-            showFormError('signup-form', 'Passwords do not match');
-            return;
-        }
-        
-        // For demo purposes, redirect to home page
-        // In a real app, this would create an account on the server
-        redirectToHome();
+        // Here we would normally handle registration
+        // For this demo, we'll just redirect to the navigation page
+        window.location.href = '/navigation';
     });
     
     // Helper function to show form errors
@@ -86,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Helper function to redirect to home page
     function redirectToHome() {
-        window.location.href = '/home';
+        window.location.href = '/navigation';
     }
     
     // Add Enter key support for forms

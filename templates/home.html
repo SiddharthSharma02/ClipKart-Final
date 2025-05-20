@@ -8,13 +8,398 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
     <meta name="description" content="ClipKart - Convert YouTube videos to professional short-form vertical videos with captions">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #333333;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --card-background: #121212;
+            --hover-color: #1e1e1e;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: var(--background-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .video-input {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .video-input.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background: var(--hover-color);
+        }
+        
+        .input-group button {
+            position: relative;
+            min-width: 150px;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .input-group button .spinner {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: spin 1s linear infinite;
+        }
+        
+        .input-group button.loading .spinner {
+            display: inline-block;
+        }
+        
+        .input-group button.loading span {
+            margin-right: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+        
+        .error-message {
+            display: none;
+            background: #3c1618;
+            color: #ff6b6b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--error-color);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        
+        .error-message i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .youtube-tips {
+            margin-top: 1.5rem;
+            background: var(--hover-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .youtube-tips h4 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .youtube-tips ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .youtube-tips li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary, #b3b3b3);
+        }
+        
+        .settings-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .settings {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .settings:hover {
+            border-color: var(--primary-color);
+            background: var(--hover-color);
+        }
+        
+        .settings label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .settings select,
+        .settings input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .progress-container {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .output-container {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin-top: 2rem;
+        }
+        
+        .output-preview {
+            position: relative;
+            background: var(--hover-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .output-preview .placeholder {
+            color: var(--text-color);
+        }
+        
+        .output-preview .placeholder i {
+            color: var(--border-color);
+        }
+        
+        .output-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .output-actions button {
+            min-width: 200px;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .download-btn {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .share-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .share-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .logo h1 {
+            color: #fff;
+        }
+        
+        .logo h1 span {
+            color: var(--primary-color);
+        }
+        
+        .logo p {
+            color: #aaa;
+        }
+        
+        .user-menu {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+        
+        .user-info .username {
+            color: var(--text-color);
+        }
+        
+        .logout-btn {
+            color: var(--primary-color);
+        }
+        
+        footer {
+            background: var(--card-background);
+            color: #aaa;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+        }
+        
+        .separator {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .separator:before, .separator:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: var(--border-color);
+        }
+        
+        .separator:before {
+            left: 0;
+        }
+        
+        .separator:after {
+            right: 0;
+        }
+        
+        .separator span {
+            background: var(--card-background);
+            padding: 0 15px;
+            color: var(--text-secondary, #999);
+            font-weight: 500;
+        }
+        
+        .file-upload {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .file-upload label {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload label:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
                 <h1>Clip<span>Kart</span></h1>
-                <p>Transform any YouTube video into a professional vertical short with Google AI-powered scene detection</p>
+                <p>Transform YouTube videos into vertical shorts - Takes the first 30 seconds of any video!</p>
             </div>
             <div class="user-menu">
                 <div class="user-info">
@@ -31,99 +416,239 @@
         </header>
 
         <main>
+            <div class="main-content">
             <div class="video-input">
-                <form id="videoForm">
+                    <form id="videoForm" enctype="multipart/form-data">
                     <div class="input-group">
-                        <input type="text" id="youtubeUrl" placeholder="Paste YouTube video URL here..." required>
-                        <button type="submit" id="submitBtn"><i class="fas fa-magic"></i> Create Short</button>
+                            <input type="text" id="youtubeUrl" name="youtubeUrl" placeholder="Paste YouTube video URL here..." >
+                            <button type="submit" id="submitBtn">
+                                <span>Create Short</span>
+                                <i class="fas fa-magic spinner"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="separator">
+                            <span>OR</span>
+                        </div>
+                        
+                        <div class="file-upload">
+                            <label for="videoFile">
+                                <i class="fas fa-upload"></i> Upload Video File
+                            </label>
+                            <input type="file" id="videoFile" name="videoFile" accept="video/*">
+                            <div class="file-name" id="fileName">No file selected</div>
+                        </div>
+                        
+                        <div class="error-message" id="errorMessage">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="errorMessageText"></span>
+                        </div>
+                        
+                        <div class="youtube-tips">
+                            <h4><i class="fas fa-lightbulb"></i> Tips for YouTube URLs:</h4>
+                            <ul>
+                                <li>Make sure the video is public and not age-restricted</li>
+                                <li>Copy the URL directly from YouTube's address bar</li>
+                                <li>Short URLs (youtu.be/...) and full URLs are both supported</li>
+                                <li>If a video doesn't work, try another one - some videos are protected</li>
+                            </ul>
                     </div>
                     
                     <div class="settings-group">
                         <div class="settings">
                             <label for="duration">
-                                <i class="fas fa-clock"></i> Duration (seconds):
-                                <input type="number" id="duration" name="duration" min="10" max="120" value="60">
+                                    <i class="fas fa-clock"></i> Duration (max 30 seconds):
+                                    <input type="number" id="duration" name="duration" min="10" max="30" value="30">
                             </label>
                         </div>
                         
                         <div class="settings">
                             <label for="format">
-                                <i class="fas fa-file-video"></i> Format:
+                                    <i class="fas fa-file-video"></i> Output Format:
                                 <select id="format" name="format">
                                     <option value="mp4">MP4</option>
-                                    <option value="mkv">MKV</option>
+                                        <option value="mov">MOV</option>
                                 </select>
                             </label>
                         </div>
                         
                         <div class="settings">
-                            <label for="captions" class="checkbox-label">
+                                <label for="captions">
+                                    <i class="fas fa-closed-captioning"></i> Add Captions:
                                 <input type="checkbox" id="captions" name="captions" checked>
-                                <i class="fas fa-closed-captioning"></i> Add captions
                             </label>
-                        </div>
-                    </div>
-                    
-                    <div class="output-path">
-                        <label for="outputPath">
-                            <i class="fas fa-folder"></i> Output folder:
-                        </label>
-                        <div class="path-input-group">
-                            <input type="text" id="outputPath" name="outputPath" value="output" required>
-                            <button type="button" id="browseBtn" class="browse-btn">Browse</button>
                         </div>
                     </div>
                 </form>
             </div>
             
             <div class="progress-container" id="progressContainer" style="display: none;">
-                <div class="status-text" id="statusText">Initializing...</div>
-                
-                <div class="progress-wrapper">
-                    <div class="progress-track">
-                        <div class="progress-bar-download" id="downloadProgress"></div>
-                        <div class="progress-bar-process" id="processProgress"></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
                     </div>
+                    <div class="progress-text" id="progressText">Processing...</div>
                 </div>
                 
-                <div class="progress-info">
-                    <div class="percentage" id="percentageText">0%</div>
-                    <div class="estimated-time">
-                        <i class="fas fa-clock"></i> 
-                        <span id="estimatedTime">Calculating...</span>
+                <div class="output-container" id="outputContainer" style="display: none;">
+                    <div class="output-preview">
+                        <div class="placeholder">
+                            <i class="fas fa-video"></i>
+                            <p>Your processed video will appear here</p>
+                        </div>
+                        <video id="outputVideo" controls style="display: none;">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
-                </div>
-                
-                <div id="downloadSection" style="display: none;">
-                    <p>Your video is ready!</p>
-                    <a href="#" id="downloadLink" class="download-btn">
-                        <i class="fas fa-download"></i> Download Short
-                    </a>
-                    <button id="newVideoBtn" class="new-video-btn">
-                        <i class="fas fa-plus"></i> Create Another
+                    <div class="output-actions">
+                        <button id="downloadBtn" class="download-btn">
+                            <i class="fas fa-download"></i> Download Video
+                    </button>
+                        <button id="shareBtn" class="share-btn">
+                            <i class="fas fa-share-alt"></i> Share
                     </button>
                 </div>
-                
-                <div id="errorSection" style="display: none;">
-                    <p id="errorText" class="error-text">An error occurred.</p>
-                    <button id="retryBtn" class="retry-btn">
-                        <i class="fas fa-redo"></i> Try Again
-                    </button>
-                </div>
-                
-                <div class="file-location" id="fileLocation" style="display: none;">
-                    <strong>File saved at:</strong>
-                    <span class="file-path" id="filePath"></span>
                 </div>
             </div>
         </main>
         
         <footer>
             <p>ClipKart &copy; 2025 | Create vertical short-form videos optimized for TikTok, Instagram Reels & YouTube Shorts</p>
-            <p class="ai-credit">Powered by Google Video Intelligence AI</p>
+            <p class="ai-credit">Simple Version: Takes first 30 seconds of any video</p>
         </footer>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoForm = document.getElementById('videoForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const outputVideo = document.getElementById('outputVideo');
+            const videoPlaceholder = document.querySelector('.output-preview .placeholder');
+            const videoFileInput = document.getElementById('videoFile');
+            const fileNameDisplay = document.getElementById('fileName');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            // File input change handler
+            videoFileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    fileNameDisplay.textContent = file.name;
+                    // Clear YouTube URL when file is selected
+                    document.getElementById('youtubeUrl').value = '';
+                } else {
+                    fileNameDisplay.textContent = 'No file selected';
+                }
+            });
+            
+            // Form submission
+            videoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const url = document.getElementById('youtubeUrl').value;
+                const file = videoFileInput.files[0];
+                
+                // Validate input - either URL or file must be provided
+                if (!url && !file) {
+                    showError('Please enter a YouTube URL or upload a video file');
+                    return;
+                }
+                
+                // Show loading state and progress container
+                submitBtn.classList.add('loading');
+                document.querySelector('.video-input').classList.add('loading');
+                errorMessage.style.display = 'none';
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Starting process...';
+                
+                // Prepare form data
+                const formData = new FormData(videoForm);
+                
+                // Send the form data to the server
+                fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Start polling for status updates
+                        pollTaskStatus(data.task_id);
+                    } else {
+                        showError(data.error || 'An error occurred while processing the video');
+                        submitBtn.classList.remove('loading');
+                        document.querySelector('.video-input').classList.remove('loading');
+                        progressContainer.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    showError('Network error: ' + error.message);
+                    submitBtn.classList.remove('loading');
+                    document.querySelector('.video-input').classList.remove('loading');
+                    progressContainer.style.display = 'none';
+                });
+            });
+            
+            function pollTaskStatus(taskId) {
+                const statusUrl = `/status/${taskId}`;
+                
+                fetch(statusUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update progress bar
+                            progressBar.style.width = `${data.progress}%`;
+                            progressText.textContent = data.current_stage || 'Processing...';
+                            
+                            if (data.status === 'completed') {
+                                // Process is complete
+                                submitBtn.classList.remove('loading');
+                                document.querySelector('.video-input').classList.remove('loading');
+                                progressContainer.style.display = 'none';
+                                
+                                // Show output container and video
+                                document.getElementById('outputContainer').style.display = 'block';
+                                videoPlaceholder.style.display = 'none';
+                                outputVideo.style.display = 'block';
+                                outputVideo.src = data.download_url;
+                                
+                                // Set download button href
+                                document.getElementById('downloadBtn').onclick = function() {
+                                    window.location.href = data.download_url;
+                                };
+                            } else if (data.status === 'failed') {
+                                // Process failed
+                                showError(data.error || 'Processing failed');
+                                submitBtn.classList.remove('loading');
+                                document.querySelector('.video-input').classList.remove('loading');
+                                progressContainer.style.display = 'none';
+                            } else {
+                                // Process still running, poll again after a delay
+                                setTimeout(() => pollTaskStatus(taskId), 1000);
+                            }
+                        } else {
+                            showError(data.error || 'Failed to check status');
+                            submitBtn.classList.remove('loading');
+                            document.querySelector('.video-input').classList.remove('loading');
+                            progressContainer.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        showError('Network error while checking status: ' + error.message);
+                        submitBtn.classList.remove('loading');
+                        document.querySelector('.video-input').classList.remove('loading');
+                        progressContainer.style.display = 'none';
+                    });
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html> 

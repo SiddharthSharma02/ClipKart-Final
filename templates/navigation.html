@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipKart - Choose Mode</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #333333;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --card-background: #121212;
+            --hover-color: #1e1e1e;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .logo h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .logo h1 span {
+            color: var(--primary-color);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+        
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .mode-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            width: 300px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        
+        .mode-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        
+        .mode-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .mode-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .mode-description {
+            font-size: 1rem;
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mode-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+        
+        footer {
+            background: var(--card-background);
+            color: #aaa;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .mode-selection {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .mode-card {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Clip<span>Kart</span></h1>
+            </div>
+            <div class="tagline">Choose your creative mode</div>
+        </header>
+        
+        <div class="mode-selection">
+            <a href="{{ url_for('home') }}" class="mode-card">
+                <div class="mode-icon">
+                    <i class="fas fa-cut"></i>
+                </div>
+                <div class="mode-title">Video Editor</div>
+                <div class="mode-description">Transform YouTube videos into vertical shorts or upload your own videos to edit</div>
+                <button class="mode-button">Get Started</button>
+            </a>
+            
+            <a href="{{ url_for('record') }}" class="mode-card">
+                <div class="mode-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="mode-title">Camera Recorder</div>
+                <div class="mode-description">Record videos with custom text overlays directly from your webcam</div>
+                <button class="mode-button">Get Started</button>
+            </a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>ClipKart &copy; 2025 | Create vertical short-form videos optimized for TikTok, Instagram Reels & YouTube Shorts</p>
+    </footer>
+</body>
+</html> 
